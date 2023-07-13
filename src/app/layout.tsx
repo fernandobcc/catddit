@@ -4,7 +4,7 @@ import '@/styles/globals.css'
 import { Inter } from 'next/font/google'
 
 export const metadata = {
-  title: 'Cpddit',
+  title: 'Catddit',
   description: 'A Reddit clone built with Next.js and TypeScript.'
 }
 
