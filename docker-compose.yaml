@@ -4,7 +4,7 @@ services:
     image: postgres:15
     environment:
       environment:
-      POSTGRES_DB: group_chat
+      POSTGRES_DB: catddit
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
     ports:
