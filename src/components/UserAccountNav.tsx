@@ -56,7 +56,7 @@ const UserAccountNav = ({ user }: UserAccountNavProps) => {
           onSelect={(event) => {
             event.preventDefault()
             signOut({
-              callbackUrl: `${window.location.origin}/sign-in`
+              callbackUrl: `${window.location.origin}/signin`
             })
           }}
         >
