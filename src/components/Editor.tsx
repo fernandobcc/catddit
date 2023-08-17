@@ -102,8 +102,10 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
               uploader: {
                 async uploadByFile(file: File) {
                   // upload to uploadthing
-                  // @ts-ignore
-                  const [res] = await uploadFiles([file], 'imageUploader')
+                  const [res] = await uploadFiles({
+                    files: [file],
+                    endpoint: 'imageUploader'
+                  })
 
                   return {
                     success: 1,
