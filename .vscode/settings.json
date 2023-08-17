@@ -5,4 +5,7 @@
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": true
     },
+    "[typescript]": {
+      "editor.tabSize": 2
+  }
 }
