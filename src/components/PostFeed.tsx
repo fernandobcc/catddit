@@ -61,6 +61,8 @@ const PostFeed = ({ initialPosts, subredditName }: PostFeedProps) => {
           return (
             <li key={post.id} ref={ref}>
               <Post
+                currentVote={currentVote}
+                votesAmt={votesAmount}
                 subredditName={post.subreddit.name}
                 post={post}
                 commentAmt={post.comments.length}
@@ -71,6 +73,8 @@ const PostFeed = ({ initialPosts, subredditName }: PostFeedProps) => {
         return (
           <Post
             key={post.id}
+            currentVote={currentVote}
+            votesAmt={votesAmount}
             subredditName={post.subreddit.name}
             post={post}
             commentAmt={post.comments.length}

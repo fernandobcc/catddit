@@ -4,6 +4,8 @@ import { MessageSquare } from 'lucide-react'
 import { useRef } from 'react'
 import Link from 'next/link'
 import EditorOutput from './EditorOutput'
+import PostVoteClient from './post-vote/PostVoteClient'
+import { VoteType } from '@prisma/client'
 
 interface PostProps {
   subredditName: string
@@ -12,13 +14,26 @@ interface PostProps {
     votes: Vote[]
   }
   commentAmt: number
+  votesAmt: number
+  currentVote?: VoteType
 }
 
-const Post = ({ subredditName, post, commentAmt }: PostProps) => {
+const Post = ({
+  subredditName,
+  post,
+  commentAmt,
+  votesAmt,
+  currentVote
+}: PostProps) => {
   const pRef = useRef<HTMLDivElement>(null)
   return (
     <div className="rounded-md bg-white shadow">
       <div className="px-6 py-4 flex justify-between">
+        <PostVoteClient
+          postId={post.id}
+          initialVotesAmt={votesAmt}
+          initialVote={currentVote}
+        />
         <div className="w-0 flex-1">
           <div className="max-h-40 mt-1 text-gray-500">
             {subredditName ? (
