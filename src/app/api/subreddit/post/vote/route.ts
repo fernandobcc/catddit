@@ -119,9 +119,34 @@ export async function PATCH(req: Request) {
       }
 
       await redis.hset(`post:${postId}`, cachePayload) // Store the post data as a hash
+
+      return new Response('OK')
     }
 
-    return new Response('OK')
+    await db.vote.create({
+      data: {
+        type: voteType,
+        userId: session.user.id,
+        postId: post.id
+      }
+    })
+
+    const votesTotal = post.votes.reduce((acc, vote) => {
+      if (vote.type === 'UP') return acc + 1
+      if (vote.type === 'DOWN') return acc - 1
+      return acc
+    }, 0)
+
+    if (votesTotal >= CACHE_AFTER_UPVOTES) {
+      const cachePayload: CachedPost = {
+        authorUsername: post.author.username ?? '',
+        content: JSON.stringify(post.content),
+        id: post.id,
+        title: post.title,
+        currentVote: voteType,
+        createdAt: post.createdAt
+      }
+    }
   } catch (error) {
     error
     if (error instanceof z.ZodError) {
