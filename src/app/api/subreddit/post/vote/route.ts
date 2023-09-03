@@ -23,18 +23,18 @@ export async function PATCH(req: Request) {
     const existingVote = await db.vote.findFirst({
       where: {
         userId: session.user.id,
-        postId
-      }
+        postId,
+      },
     })
 
     const post = await db.post.findUnique({
       where: {
-        id: postId
+        id: postId,
       },
       include: {
         author: true,
-        votes: true
-      }
+        votes: true,
+      },
     })
 
     if (!post) {
@@ -48,10 +48,30 @@ export async function PATCH(req: Request) {
           where: {
             userId_postId: {
               postId,
-              userId: session.user.id
-            }
-          }
+              userId: session.user.id,
+            },
+          },
         })
+
+        // Recount the votes
+        const votesAmt = post.votes.reduce((acc, vote) => {
+          if (vote.type === 'UP') return acc + 1
+          if (vote.type === 'DOWN') return acc - 1
+          return acc
+        }, 0)
+
+        if (votesAmt >= CACHE_AFTER_UPVOTES) {
+          const cachePayload: CachedPost = {
+            authorUsername: post.author.username ?? '',
+            content: JSON.stringify(post.content),
+            id: post.id,
+            title: post.title,
+            currentVote: null,
+            createdAt: post.createdAt,
+          }
+
+          await redis.hset(`post:${postId}`, cachePayload) // Store the post data as a hash
+        }
 
         return new Response('OK')
       }
@@ -61,12 +81,12 @@ export async function PATCH(req: Request) {
         where: {
           userId_postId: {
             postId,
-            userId: session.user.id
-          }
+            userId: session.user.id,
+          },
         },
         data: {
-          type: voteType
-        }
+          type: voteType,
+        },
       })
 
       // Recount the votes
@@ -83,7 +103,7 @@ export async function PATCH(req: Request) {
           id: post.id,
           title: post.title,
           currentVote: voteType,
-          createdAt: post.createdAt
+          createdAt: post.createdAt,
         }
 
         await redis.hset(`post:${postId}`, cachePayload) // Store the post data as a hash
@@ -97,8 +117,8 @@ export async function PATCH(req: Request) {
       data: {
         type: voteType,
         userId: session.user.id,
-        postId
-      }
+        postId,
+      },
     })
 
     // Recount the votes
@@ -115,7 +135,7 @@ export async function PATCH(req: Request) {
         id: post.id,
         title: post.title,
         currentVote: voteType,
-        createdAt: post.createdAt
+        createdAt: post.createdAt,
       }
 
       await redis.hset(`post:${postId}`, cachePayload) // Store the post data as a hash
@@ -123,7 +143,7 @@ export async function PATCH(req: Request) {
 
     return new Response('OK')
   } catch (error) {
-    error
+    (error)
     if (error instanceof z.ZodError) {
       return new Response(error.message, { status: 400 })
     }

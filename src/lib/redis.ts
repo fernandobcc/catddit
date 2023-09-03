@@ -1,7 +1,17 @@
-import {Redis} from "@upstash/redis"
+import { Redis } from "ioredis"
 
-
-export const redis = new Redis({
-  url: process.env.REDIS_URL!,
-  token: process.env.REDIS_SECRET!,
+console.log({
+  port: process.env.REDIS_PORT!,
+  host: process.env.REDIS_HOST!,
+  password: process.env.REDIS_SECRET!,
+  db: process.env.REDIS_DB!,
 })
+
+// @ts-ignore
+export const redis = new Redis({
+  port: process.env.REDIS_PORT!,
+  host: process.env.REDIS_HOST!,
+  password: process.env.REDIS_SECRET!,
+  db: process.env.REDIS_DB!,
+})
+

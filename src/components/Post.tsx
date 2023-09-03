@@ -52,7 +52,7 @@ const Post = ({
               {formatTimeToNow(new Date(post.createdAt))}
             </span>
           </div>
-          <a href={`/r/${subredditName}/${post.id}`}>
+          <a href={`/r/${subredditName}/post/${post.id}`}>
             <h2 className="text-lg font-semiboldpy-2 leading-2 text-gray-900">
               {post.title}
             </h2>
