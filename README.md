@@ -1,4 +1,4 @@
-This is reddit clone project.
+This is reddit clone project. Reference [joshtriedcoding](https://www.youtube.com/@joshtriedcoding)
 
 ## Getting Started
 
