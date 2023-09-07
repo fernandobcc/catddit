@@ -1,6 +1,8 @@
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { Comment, CommentVote, User } from '@prisma/client'
+import CreateComment from './CreateComment'
+import PostComment from './PostComment'
 
 type ExtendedComment = Comment & {
   votes: CommentVote[]
@@ -24,7 +26,7 @@ const CommentsSection = async ({ postId }: CommentsSectionProps) => {
   const comments = await db.comment.findMany({
     where: {
       postId: postId,
-      replyToId: null, // only fetch top-level comments
+      replyToId: null // only fetch top-level comments
     },
     include: {
       author: true,
@@ -33,19 +35,19 @@ const CommentsSection = async ({ postId }: CommentsSectionProps) => {
         // first level replies
         include: {
           author: true,
-          votes: true,
-        },
-      },
-    },
+          votes: true
+        }
+      }
+    }
   })
 
   return (
-    <div className='flex flex-col gap-y-4 mt-4'>
-      <hr className='w-full h-px my-6' />
+    <div className="flex flex-col gap-y-4 mt-4">
+      <hr className="w-full h-px my-6" />
 
-      {/* <CreateComment postId={postId} /> */}
+      <CreateComment postId={postId} />
 
-      <div className='flex flex-col gap-y-6 mt-4'>
+      <div className="flex flex-col gap-y-6 mt-4">
         {comments
           .filter((comment) => !comment.replyToId)
           .map((topLevelComment) => {
@@ -63,10 +65,14 @@ const CommentsSection = async ({ postId }: CommentsSectionProps) => {
             )
 
             return (
-              <div key={topLevelComment.id} className='flex flex-col'>
-                <div className='mb-2'>
-
-                  {/* Render top-level comment */}
+              <div key={topLevelComment.id} className="flex flex-col">
+                <div className="mb-2">
+                  <PostComment
+                    comment={topLevelComment}
+                    currentVote={topLevelCommentVote}
+                    votesAmt={topLevelCommentVotesAmt}
+                    postId={postId}
+                  />
                 </div>
 
                 {/* Render replies */}
@@ -86,8 +92,14 @@ const CommentsSection = async ({ postId }: CommentsSectionProps) => {
                     return (
                       <div
                         key={reply.id}
-                        className='ml-2 py-2 pl-4 border-l-2 border-zinc-200'>
-                        {/* Render post comments */}
+                        className="ml-2 py-2 pl-4 border-l-2 border-zinc-200"
+                      >
+                        <PostComment
+                          comment={reply}
+                          currentVote={replyVote}
+                          votesAmt={replyVotesAmt}
+                          postId={postId}
+                        />
                       </div>
                     )
                   })}
